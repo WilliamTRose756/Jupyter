@@ -1,136 +1,50 @@
+import json
 import pandas as pd
 from pandas import json_normalize
-from flatten_json import flatten
-
-listings = {
-        "tenantName": "GREENVILLE",
-        "eventType": "EXIT",
-        "eventTimeEpoch": 1657152013,
-        "payload": {
-            "data": [
-                {
-                    "antenna": "Antenna2",
-                    "datetime": "2022-07-06 18:53:33.0827",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000139",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -56
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:37.0157",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000139",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -55
-                },
-                {
-                    "antenna": "Antenna2",
-                    "datetime": "2022-07-06 18:53:40.0427",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000139",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -58
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:37.0216",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000138",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -59
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:34.0428",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000040",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -61
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:34.0427",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000136",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -67
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:38.0717",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000136",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -60
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:34.0457",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000135",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -68
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:34.0457",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000134",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -66
-                },
-                {
-                    "antenna": "Antenna1",
-                    "datetime": "2022-07-06 18:53:34.0607",
-                    "readername": "Modjoul Test 2",
-                    "epc": "MODJ00000133",
-                    "deviceid": "A5:8D:ZC:90:95:9Z",
-                    "user": "null",
-                    "tagevent": "Tag Visible",
-                    "peakrssi": -67
-                }
-            ],
-            "accountuuid": "12345678911223344",
-            "version": "1.0",
-            "deviceid": "A5:8D:ZC:90:95:9Z"
-        }
-    }
-
-flat = pd.json_normalize(listings, max_level=1)
 
 
+# Load JSON files and define variables
+with open('data_1.json') as data_1:
+    read_content_1 = json.load(data_1)
+with open('data_2.json') as data_2:
+    read_content_2 = json.load(data_2)
+with open('data_3.json') as data_3:
+    read_content_3 = json.load(data_3)
 
+# Pull out instances from main objects and start isolating constants
+constants = read_content_1[0].pop('payload')
+instances_2 = read_content_2[0].pop('payload')
+instances_3 = read_content_3[0].pop('payload')
 
-# flat = pd.json_normalize(data, 'payload', ['tenantName', 'eventType', 'eventTimeEpoch', 'accountuuid', 'version'  ]  )
+# Isolating last three constant key:values ('accountuuid', 'version', 'deviceid')
+instances_1 = constants.pop('data')
 
-# dic_flattened = [flatten(d) for d in test]
+# Create dictionary of constant key:value pairs
+constants.update(read_content_1[0])
 
+# Remove nesting and standardize variable names
+clean_instances_1 = instances_1
+clean_instances_2 = instances_2.pop('data')
+clean_instances_3 = instances_3.pop('data')
 
+# Iterate and append constant key:value pairs to each instance
+for i in clean_instances_1:
+    i.update(constants)
 
+for i in clean_instances_2:
+    i.update(constants)
 
-# df = pd.DataFrame(dic_flattened)
+for i in clean_instances_3:
+    i.update(constants)
 
-flat['payload'].to_csv('test1.csv')
+# Concatenate dictionaries together to form one list
+grouped = clean_instances_1 + clean_instances_2 + clean_instances_3
 
+# Flatten data to format for table
+flat = pd.json_normalize(grouped, max_level=0)
 
+# Rearrange column order
+final = flat[['tenantName', 'eventType', 'eventTimeEpoch', 'antenna', 'datetime', 'readername', 'epc', 'deviceid', 'user', 'tagevent', 'peakrssi', 'accountuuid', 'version']]
 
-# flat.to_csv('test.csv')
+# Create csv file with indexes removed
+final.to_csv('final_table.csv', index=None)
