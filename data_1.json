@@ -1,4 +1,5 @@
- {
+[
+    {
         "tenantName": "GREENVILLE",
         "eventType": "EXIT",
         "eventTimeEpoch": 1657152013,
@@ -110,3 +111,4 @@
             "deviceid": "A5:8D:ZC:90:95:9Z"
         }
     }
+]
